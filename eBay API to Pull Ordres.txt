@@ -1,0 +1,31 @@
+// Sample code to pull orders from eBay API and embed it to your own web based software
+
+// First, you need to get your eBay API credentials
+const ebayAppId = 'your_app_id';
+const ebayDevId = 'your_dev_id';
+const ebayCertId = 'your_cert_id';
+const ebayAuthToken = 'your_auth_token';
+
+// Then, you can use the eBay Trading API to pull orders
+const eBay = require('ebay-node-api');
+
+const ebayApi = new eBay({
+  clientID: ebayAppId,
+  clientSecret: ebayAuthToken,
+  body: {
+    devId: ebayDevId,
+    certId: ebayCertId,
+    authToken: ebayAuthToken,
+    appId: ebayAppId,
+    sandbox: true, // set to false for production
+    version: '1113'
+  }
+});
+
+ebayApi.getOrders({
+  // add any necessary parameters here
+}).then((response) => {
+  // handle the response here
+}).catch((error) => {
+  // handle any errors here
+});
