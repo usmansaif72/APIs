@@ -1,0 +1,38 @@
+// I'm sorry, but it is not possible to pull the orders list from your Amazon account using PHP Laravel. Amazon does not provide an API for this purpose. 
+// However, you can use Amazon MWS (Marketplace Web Service) to access order data. 
+// To pull orders from Amazon and embed them into your system, you can use the Amazon MWS (Marketplace Web Service) API. Below is the API example code of how you can use the Amazon MWS PHP Client Library to get a list of orders.
+// You can use the Amazon MWS PHP Client Library to interact with the Amazon MWS API. 
+// Here is an example of how to use the Amazon MWS PHP Client Library to get a list of orders:
+
+require_once('MarketplaceWebServiceOrders/Client.php');
+require_once('MarketplaceWebServiceOrders/Model/ListOrdersRequest.php');
+
+$config = array (
+  'ServiceURL' => 'https://mws.amazonservices.com/Orders/2013-09-01',
+  'ProxyHost' => null,
+  'ProxyPort' => -1,
+  'ProxyUsername' => null,
+  'ProxyPassword' => null,
+  'MaxErrorRetry' => 3,
+);
+
+$service = new MarketplaceWebServiceOrders_Client(
+  AWS_ACCESS_KEY_ID,
+  AWS_SECRET_ACCESS_KEY,
+  APPLICATION_NAME,
+  APPLICATION_VERSION,
+  $config);
+
+$request = new MarketplaceWebServiceOrders_Model_ListOrdersRequest();
+$request->setSellerId(MERCHANT_ID);
+$request->setMarketplaceId(MARKETPLACE_ID);
+$request->setCreatedAfter(new DateTime('-1 week'));
+$request->setOrderStatus('Shipped');
+
+$response = $service->listOrders($request);
+
+$orders = $response->getListOrdersResult()->getOrders();
+
+foreach ($orders as $order) {
+  echo $order->getAmazonOrderId() . "\n";
+}
