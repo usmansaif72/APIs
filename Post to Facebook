@@ -1,0 +1,48 @@
+// To push posts to Facebook from outside of Facebook using Laravel, you can utilize the Facebook Graph API. Here's an example of how you can achieve this:
+
+// 1. Install the Facebook PHP SDK using Composer:
+composer require facebook/graph-sdk
+
+// 2. Create a new Laravel controller to handle the API requests. For example, you can create a FacebookController:
+php artisan make:controller FacebookController
+
+// 3. In the FacebookController, import the necessary classes and define a method to handle the post request:
+use Facebook\Facebook;
+use Facebook\Exceptions\FacebookResponseException;
+use Facebook\Exceptions\FacebookSDKException;
+
+class FacebookController extends Controller
+{
+    public function postToFacebook(Request $request)
+    {
+        $fb = new Facebook([
+            'app_id' => 'your-app-id',
+            'app_secret' => 'your-app-secret',
+            'default_graph_version' => 'v2.10',
+        ]);
+
+        $accessToken = 'your-access-token';
+
+        try {
+            $response = $fb->post(
+                '/{page-id}/feed',
+                [
+                    'message' => $request->input('message'),
+                ],
+                $accessToken
+            );
+            $graphNode = $response->getGraphNode();
+            return 'Posted with id: ' . $graphNode['id'];
+        } catch (FacebookResponseException $e) {
+            return 'Graph returned an error: ' . $e->getMessage();
+        } catch (FacebookSDKException $e) {
+            return 'Facebook SDK returned an error: ' . $e->getMessage();
+        }
+    }
+}
+
+// 4. Define a route in your routes/web.php file to map the API request to the postToFacebook method in the FacebookController:
+Route::post('/post-to-facebook', 'FacebookController@postToFacebook');
+
+// 5. Now, you can send a POST request to /post-to-facebook with the message parameter to post to Facebook. Make sure to replace {page-id}, your-app-id, your-app-secret, and your-access-token with the appropriate values.
+// Remember to handle authentication and authorization properly to ensure the security of your application.
